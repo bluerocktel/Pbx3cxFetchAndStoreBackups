@@ -16,7 +16,8 @@ The project employs a collection of bash scripts tailored to address the specifi
 ## Setup
 
 1. Configuration File: Rename .env.example to .env and customise it according to your specific requirements.
-2. SSH Key Authentication: Ensure that the worker has SSH key access to both 3CX hosts and the designated backup storage.
+2. List of hosts: rename .hosts.example to hosts and enter your hosts FQDN, one per line.
+3. SSH Key Authentication: Ensure that the worker has SSH key access to both 3CX hosts and the designated backup storage.
 
 ## Scripts
 
