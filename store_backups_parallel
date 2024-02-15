@@ -1,7 +1,26 @@
 #!/bin/bash
+#
+# (c) 2024 - BlueRockTEL. <hello@bluerockel.com>
+#
+# This file is part of Pbx3cxFetchAndStoreBackups.
+#
+# Pbx3cxFetchAndStoreBackups is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Pbx3cxFetchAndStoreBackups is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Pbx3cxFetchAndStoreBackups. If not, see <http://www.gnu.org/licenses/>
+
+source .env
+working_directory=$(pwd)
 
 mkdir -p "${working_directory}/logs"
-
 journal="${working_directory}/logs/store_journal.txt"
 rm "$journal"
 touch "$journal"
