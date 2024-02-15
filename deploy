@@ -1,0 +1,16 @@
+#!/bin/bash
+
+source .env
+
+files=(
+    .env
+    hosts
+    fetch_backups
+    fetch_backups_parallel
+    store_backups
+    store_backups_parallel
+)
+
+for file in "${files[@]}"; do
+    scp -P ${worker_port} $file ${worker_user}@${worker}:${worker_path}/
+done

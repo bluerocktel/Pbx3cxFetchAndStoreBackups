@@ -1,0 +1,33 @@
+#!/bin/bash
+
+source .env
+working_directory=$(pwd)
+input=${working_directory}/$1
+
+connections_ok_file="${working_directory}/logs/connections_ok.txt"
+connections_ko_file="${working_directory}/logs/connections_ko.txt"
+journal="${working_directory}/logs/get_journal.txt"
+current_date=$(date +"%Y%m%d")
+current_journal="${working_directory}/logs/get_journal_$current_date.txt"
+
+day=$(date +%a)
+
+set -e
+
+while IFS= read -r host
+do
+    echo "Processing host: $host"
+    mkdir -p "${worker_backups_path}/${host}"
+    mkdir -p "${worker_backups_path}/${host}/${day}"
+
+    if rsync -avzte 'ssh -o PasswordAuthentication=no' "phonesystem@$host:/var/lib/3cxpbx/Instance1/Data/Backups/" "${worker_backups_path}/${host}/${day}/"; then
+        echo "Rsync from host $host: ok" >> "$connections_ok_file"
+        echo "Rsync from host $host: ok" >> "$journal"
+        echo "Rsync from host $host: ok" >> "$current_journal"
+    else
+        echo "Rsync from host $host: ko" >> "$connections_ko_file"
+        echo "Rsync from host $host: ko" >> "$journal"
+        echo "Rsync from host $host: ko" >> "$current_journal"
+    fi
+
+done < "$input"

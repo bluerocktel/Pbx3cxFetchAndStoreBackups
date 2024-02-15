@@ -1,0 +1,29 @@
+#!/bin/bash
+
+source .env
+working_directory=$(pwd)
+input=${working_directory}/$1
+
+journal="${working_directory}/logs/store_journal.txt"
+current_date=$(date +"%Y%m%d")
+current_journal="${working_directory}/logs/store_journal_$current_date.txt"
+
+day=$(date +%a)
+
+set -e
+
+while IFS= read -r host
+do
+    echo "Processing host: $host"
+    ssh -p ${destination_port} -n ${destination_user}@${destination_host} "mkdir -p ${host}"
+    ssh -p ${destination_port} -n ${destination_user}@${destination_host} "mkdir -p ${host}/${day}"
+
+    if rsync -avzte "ssh -p${destination_host} -o PasswordAuthentication=no" "${worker_backups_path}/${host}/${day}/" "${destination_user}@${destination_host}:${host}/${day}/"; then
+        echo "Rsync to destination for host $host: ok" >> "$journal"
+        echo "Rsync to destination for host $host: ok" >> "$current_journal"
+    else
+        echo "Rsync to destination for host $host: ok" >> "$journal"
+        echo "Rsync to destination for host $host: ok" >> "$current_journal"
+    fi
+
+done < "$input"

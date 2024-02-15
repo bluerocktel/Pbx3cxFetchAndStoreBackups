@@ -1,0 +1,33 @@
+#!/bin/bash
+
+mkdir -p "${working_directory}/logs"
+connections_ok_file="${working_directory}/logs/connections_ok.txt"
+connections_ko_file="${working_directory}/logs/connections_ko.txt"
+rm "$connections_ok_file"
+rm "$connections_ko_file"
+touch "$connections_ok_file"
+touch "$connections_ko_file"
+
+journal="${working_directory}/logs/get_journal.txt"
+rm "$journal"
+touch "$journal"
+
+current_date=$(date +"%Y%m%d")
+current_journal="${working_directory}/logs/get_journal_$current_date.txt"
+touch "$current_journal"
+
+split -l 10 -d hosts "hosts_fetch_batch_"
+
+file_array=()
+
+while IFS=  read -r -d $'\0'; do
+    file_array+=("$REPLY")
+done < <(find . -type f -name 'hosts_fetch_batch_*' -print0)
+
+for file in "${file_array[@]}"; do
+    ./fetch_backups $file &
+done
+
+wait
+
+rm hosts_fetch_batch_*
