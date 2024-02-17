@@ -18,19 +18,16 @@
 # along with Pbx3cxFetchAndStoreBackups. If not, see <http://www.gnu.org/licenses/>
 
 source .env
+working_directory=$(pwd)
 
-files=(
-    .env
-    check_backups
-    clean_up
-    hosts
-    fetch_backups
-    fetch_backups_parallel
-    notify
-    store_backups
-    store_backups_parallel
-)
+input="${working_directory}/hosts"
 
-for file in "${files[@]}"; do
-    scp -P ${worker_port} $file ${worker_user}@${worker}:${worker_path}/
-done
+while IFS= read -r host
+do
+    for i in {6..2}
+    do
+        day=$(date -d "$i days ago" +a)
+        echo "clean up host ${host} for day ${day}"
+        rm -rf "${worker_backups_path}/${host}/${day}"
+    done
+done < "$input"
