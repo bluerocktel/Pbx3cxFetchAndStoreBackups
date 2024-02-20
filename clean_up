@@ -26,7 +26,7 @@ while IFS= read -r host
 do
     for i in {6..2}
     do
-        day=$(date -d "$i days ago" +a)
+        day=$(date -d "$i days ago" +%a)
         echo "clean up host ${host} for day ${day}"
         rm -rf "${worker_backups_path}/${host}/${day}"
     done
