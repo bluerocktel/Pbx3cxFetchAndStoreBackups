@@ -13,11 +13,16 @@ The project employs a collection of bash scripts tailored to address the specifi
 - Retention Management: Maintains a 7-day retention period for each 3CX host, ensuring data availability for recovery purposes.
 - Automated Reporting: Daily email reports provide technicians with valuable insights into backup status and performance.
 
+## Exceptions list
+
+We've implemented an "exceptions" list for streamlined management. This decision stems from the automatic updates to our host list provided by [BlueRockTEL](https://bluerocktel.com). Maintaining a separate, manually updated list has proven to be the most efficient method for handling specific scenarios such as customer-initiated backups, non-backup-required sandboxes, and other special cases.
+
 ## Setup
 
 1. Configuration File: Rename .env.example to .env and customise it according to your specific requirements.
-2. List of hosts: rename .hosts.example to hosts and enter your hosts FQDN, one per line.
-3. SSH Key Authentication: Ensure that the worker has SSH key access to both 3CX hosts and the designated backup storage.
+2. List of hosts: rename hosts.example to hosts and enter your hosts FQDN, one per line.
+3. List of exceptions: rename exceptions.example to exceptions and enter the FQDN of the hosts you do not want to include in backups, one per line.
+4. SSH Key Authentication: Ensure that the worker has SSH key access to both 3CX hosts and the designated backup storage.
 
 ## Scripts
 
@@ -28,7 +33,7 @@ Fetches backup files from 3CX hosts and stores them locally on the worker.
 ### store_backups_parallel
 
 Transfers backup files from the worker to the designated storage location.
-We usually rely on [Hetzner Storage Sox solution](https://www.hetzner.com/storage/storage-box/) for seamless accessibility via SCP or SFTP.
+We usually rely on [Hetzner Storage Box solution](https://www.hetzner.com/storage/storage-box/) for seamless accessibility via SCP or SFTP.
 
 ### check_backups
 
