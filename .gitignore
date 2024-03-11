@@ -1,4 +1,5 @@
 .env
 hosts
+exceptions
 hosts_*
 logs/

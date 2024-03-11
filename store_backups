@@ -18,13 +18,13 @@
 # along with Pbx3cxFetchAndStoreBackups. If not, see <http://www.gnu.org/licenses/>
 
 source .env
-working_directory=$(pwd)
 
-input=${working_directory}/$1
+input="${worker_path}/$1"
+exceptions="${worker_path}/exceptions"
 
-journal="${working_directory}/logs/store_journal.txt"
+journal="${worker_path}/logs/store_journal.txt"
 current_date=$(date +"%Y%m%d")
-current_journal="${working_directory}/logs/store_journal_$current_date.txt"
+current_journal="${worker_path}/logs/store_journal_$current_date.txt"
 
 day=$(date +%a)
 
@@ -32,6 +32,15 @@ set -e
 
 while IFS= read -r host
 do
+
+    exception=$(grep -c "$host" "$exceptions")
+
+    if [ "$exception" -gt 0 ]; then
+        echo "Host $host is in the exception file, skipping" >> "$journal"
+        echo "Host $host is in the exception file, skipping" >> "$current_journal"
+        continue
+    fi
+
     echo "Processing host: $host"
     ssh -p ${destination_port} -n ${destination_user}@${destination_host} "mkdir -p ${host}"
     ssh -p ${destination_port} -n ${destination_user}@${destination_host} "mkdir -p ${host}/${day}"

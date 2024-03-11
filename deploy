@@ -24,6 +24,7 @@ files=(
     check_backups
     clean_up
     hosts
+    exceptions
     fetch_backups
     fetch_backups_parallel
     notify

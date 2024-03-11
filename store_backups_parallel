@@ -18,15 +18,14 @@
 # along with Pbx3cxFetchAndStoreBackups. If not, see <http://www.gnu.org/licenses/>
 
 source .env
-working_directory=$(pwd)
 
-mkdir -p "${working_directory}/logs"
-journal="${working_directory}/logs/store_journal.txt"
+mkdir -p "${worker_path}/logs"
+journal="${worker_path}/logs/store_journal.txt"
 rm "$journal"
 touch "$journal"
 
 current_date=$(date +"%Y%m%d")
-current_journal="${working_directory}/logs/store_journal_$current_date.txt"
+current_journal="${worker_path}/logs/store_journal_$current_date.txt"
 touch "$current_journal"
 
 split -l 100 -d hosts "hosts_store_batch_"

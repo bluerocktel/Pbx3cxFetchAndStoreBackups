@@ -18,45 +18,52 @@
 # along with Pbx3cxFetchAndStoreBackups. If not, see <http://www.gnu.org/licenses/>
 
 source .env
-working_directory=$(pwd)
 
-backups_ok="${working_directory}/logs/backups_ok.txt"
-backups_ko="${working_directory}/logs/backups_ko.txt"
+backups_ok="${worker_path}/logs/backups_ok.txt"
+backups_ko="${worker_path}/logs/backups_ko.txt"
 rm "$backups_ok"
 rm "$backups_ko"
 touch "$backups_ok"
 touch "$backups_ko"
 
-input="${working_directory}/hosts"
+input="${worker_path}/hosts"
+exceptions="${worker_path}/exceptions"
 
 day=$(date +%a)
 twenty_four_hours_ago=$(date -d '24 hours ago' +%s)
 
 while IFS= read -r host
 do
-  host_backups_directory="${worker_backups_path}/${host}/${day}"
 
-  if [ -d "$host_backups_directory" ]; then
+    exception=$(grep -c "$host" "$exceptions")
 
-      if [ "$(find "$host_backups_directory" -maxdepth 1 -type f 2>/dev/null)" ]; then
+    if [ "$exception" -gt 0 ]; then
+        continue
+    fi
 
-        most_recent_file="$(find "$host_backups_directory" -maxdepth 1 -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -d ' ' -f 2)"
-        most_recent_timestamp=$(date -r "$most_recent_file" +%s)
-        most_recent_datetime=$(date -r "$most_recent_file" +"%d/%m/%Y %H:%M:%S")
-        file_size=$(stat -c %s "$most_recent_file")
-        file_size_mb=$(awk "BEGIN {printf \"%.2f\", $file_size / (1024 * 1024)}")
+    host_backups_directory="${worker_backups_path}/${host}/${day}"
 
-        if [ "$most_recent_timestamp" -gt "$twenty_four_hours_ago" ]; then
-          echo "backup ok for host $host: $most_recent_datetime, $file_size_mb MB" >> "$backups_ok"
+    if [ -d "$host_backups_directory" ]; then
+
+        if [ "$(find "$host_backups_directory" -maxdepth 1 -type f 2>/dev/null)" ]; then
+
+            most_recent_file="$(find "$host_backups_directory" -maxdepth 1 -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -d ' ' -f 2)"
+            most_recent_timestamp=$(date -r "$most_recent_file" +%s)
+            most_recent_datetime=$(date -r "$most_recent_file" +"%d/%m/%Y %H:%M:%S")
+            file_size=$(stat -c %s "$most_recent_file")
+            file_size_mb=$(awk "BEGIN {printf \"%.2f\", $file_size / (1024 * 1024)}")
+
+            if [ "$most_recent_timestamp" -gt "$twenty_four_hours_ago" ]; then
+                echo "backup ok for host $host: $most_recent_datetime, $file_size_mb MB" >> "$backups_ok"
+            else
+                echo "backup ko for host $host: $most_recent_datetime, $file_size_mb MB" >> "$backups_ko"
+            fi
+
         else
-          echo "backup ko for host $host: $most_recent_datetime, $file_size_mb MB" >> "$backups_ko"
+            echo "No backup files found for host $host" >> "$backups_ko"
         fi
 
-      else
-        echo "No backup files found for host $host" >> "$backups_ko"
-      fi
-
-fi
+    fi
 
 done < "$input"
 
