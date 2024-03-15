@@ -28,8 +28,6 @@ current_journal="${worker_path}/logs/store_journal_$current_date.txt"
 
 day=$(date +%a)
 
-set -e
-
 while IFS= read -r host
 do
 
@@ -40,6 +38,7 @@ do
         echo "Host $host is in the exception file, skipping" >> "$current_journal"
         continue
     fi
+
 
     echo "Processing host: $host"
     ssh -p ${destination_port} -n ${destination_user}@${destination_host} "mkdir -p ${host}"
