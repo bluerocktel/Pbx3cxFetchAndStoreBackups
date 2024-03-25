@@ -43,6 +43,10 @@ Verifies the integrity and freshness of backups, considering them valid if the f
 
 Sends daily reports to designated technicians, configurable through the .env configuration file.
 
+### clean_up
+
+Optional: removes some backups on the workremoves some backups on the worker in order to preserve disk space. The 7-day retention period is kept on the final backup location.
+
 ## Usage
 
 To initiate backup fetching and storage processes, execute the relevant scripts with appropriate parameters. Ensure that the .env file is properly configured before running any scripts.

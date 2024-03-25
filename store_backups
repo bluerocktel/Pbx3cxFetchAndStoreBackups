@@ -30,7 +30,6 @@ day=$(date +%a)
 
 while IFS= read -r host
 do
-
     exception=$(grep -c "$host" "$exceptions")
 
     if [ "$exception" -gt 0 ]; then
@@ -38,7 +37,6 @@ do
         echo "Host $host is in the exception file, skipping" >> "$current_journal"
         continue
     fi
-
 
     echo "Processing host: $host"
     ssh -p ${destination_port} -n ${destination_user}@${destination_host} "mkdir -p ${host}"
