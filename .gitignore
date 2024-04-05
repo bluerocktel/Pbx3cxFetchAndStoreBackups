@@ -3,3 +3,5 @@ hosts
 exceptions
 hosts_*
 logs/
+keys_setup
+output.txt
